@@ -122,10 +122,11 @@ var controller = {
                         message: "Correo no registrado"
                     });
                 } else {
-                    //Comprobar conse;a enviada con la que esta en Mongo
+                    //Comprobar contrase;a enviada con la que esta en Mongo
                     bcrypt.compare(params.password, userEncontrado.password, (error, ToF) => {
                         if (ToF) {
                             //Generar token
+                            //Si lo solicita (getToken)
                             if (params.getToken) {
                                 return res.status(200).send({
                                     token: jwt.createToken(userEncontrado)
@@ -153,6 +154,9 @@ var controller = {
             });
         }
     },
+
+    //Actualiza un usuario ya identificado, para usar el update envia un token
+    //pasa por los middleware para verificar token y actuliza con los datos del req.body enviados por el usuario
 
     update: function(req, res) {
         // 0. Crear un middleware para verificar el jwt token, ponerselo a la ruta
@@ -223,6 +227,9 @@ var controller = {
 
     },
 
+    //Sube una imagen, guarda el path(ruta) de la imagen (req.files.file0,path) en la BD
+    //y la imagen en una carpeta uploads
+
     uploadAvatar: function(req, res) {
         //Configurar el modulo multiparty (router/user)
 
@@ -278,6 +285,23 @@ var controller = {
         }
 
 
+    },
+
+    //Envias el nombre de la imagen por la url (get) y te devuelve la imagen
+
+    avatar: function(req, res) {
+        var fileName = req.params.fileName;
+        var avatarPath = './uploads/users/' + fileName;
+
+        fs.exists(avatarPath, (ToF) => {
+            if (ToF) {
+                return res.sendFile(path.resolve(avatarPath));
+            } else {
+                return res.status(404).send({
+                    message: 'La imagen no existe'
+                });
+            }
+        });
     }
 
 
