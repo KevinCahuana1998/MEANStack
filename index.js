@@ -2,6 +2,9 @@ var mongoose = require('mongoose');
 var app = require('./app');
 var port = process.env.port | 3999;
 
+//Desabilitando un antiguo metodo que genera warning
+mongoose.set('useFindAndModify', false);
+
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/api-rest-node', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {

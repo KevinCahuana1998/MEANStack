@@ -20,10 +20,16 @@ var controller = {
         //recoger los parametros de la peticion
         var params = req.body;
         //Validar los datos
-        var validate_name = !validator.isEmpty(params.name);
-        var validate_surname = !validator.isEmpty(params.surname);
-        var validate_enail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
-        var validate_password = !validator.isEmpty(params.password);
+        try {
+            validate_name = !validator.isEmpty(params.name);
+            validate_surname = !validator.isEmpty(params.surname);
+            validate_enail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
+            validate_password = !validator.isEmpty(params.password);
+        } catch (err) {
+            return res.status(400).send({
+                message: "Faltan datos"
+            });
+        }
 
         if (validate_enail && validate_name && validate_password && validate_surname) {
             //Crear objeto de usuario
@@ -89,8 +95,14 @@ var controller = {
         //Recoger los parametros de la peticion
         params = req.body;
         //Validar los datos
-        var validate_enail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
-        var validate_password = !validator.isEmpty(params.password);
+        try {
+            validate_enail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
+            validate_password = !validator.isEmpty(params.password);
+        } catch (err) {
+            return res.status(400).send({
+                message: "Faltan datos"
+            });
+        }
 
         if (validate_password && validate_enail) {
             //Buscar usuarios que coincidan con el email que nos llega
@@ -142,9 +154,71 @@ var controller = {
 
     update: function(req, res) {
         // 0. Crear un middleware para verificar el jwt token, ponerselo a la ruta
-        return res.status(400).send({
-            message: "Metodo update"
-        });
+
+        //Recoger los datos a actualizar
+        var params = req.body;
+
+        //Validar datos
+        try {
+            var validate_name = !validator.isEmpty(params.name);
+            var validate_surname = !validator.isEmpty(params.surname);
+            var validate_enail = !validator.isEmpty(params.email) && validator.isEmail(params.email);
+
+        } catch (err) {
+            return res.status(400).send({
+                message: "Faltan datos"
+            });
+        }
+
+
+        //Eliminar datos innecesarios
+        delete params.password;
+
+        //Comprobar si el email es unico
+        if (req.user.email != params.email) {
+            User.findOne({ email: params.email.toLowerCase() }, (error, user) => {
+
+                if (error) {
+                    return res.status(500).send({
+                        message: "Error al comprobar duplicidad del correo"
+                    });
+                }
+
+                if (user && user.email == params.email) {
+                    return res.status(400).send({
+                        message: 'Correo ya existente, no puede modificarse'
+                    });
+                }
+
+                return res.status(400).send({
+                    message: 'El correo no puede cambiarse'
+                });
+            });
+
+        } else {
+            var userID = req.user.sub;
+            //Buscar y actualizar documento
+            User.findOneAndUpdate({ _id: userID }, params, { new: true }, (error, userUpdated) => {
+
+                if (error || !userUpdated) {
+                    //Devolver respuesta
+                    return res.status(200).send({
+                        status: 'success',
+                        message: 'Error al actualizar datos'
+                    });
+                }
+
+                //Devolver respuesta
+                return res.status(200).send({
+                    status: 'success',
+                    user: userUpdated
+                });
+            });
+        }
+
+
+
+
     }
 
 
