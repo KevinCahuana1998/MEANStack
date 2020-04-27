@@ -302,7 +302,42 @@ var controller = {
                 });
             }
         });
+    },
+
+    getUsers: function(req, res) {
+
+        User.find().exec((error, users) => {
+            if (error || !users) {
+                return res.status(404).send({
+                    message: 'No hay usuarios para mostrar'
+                });
+            }
+
+            return res.status(404).send({
+                status: 'success',
+                users
+            });
+        });
+    },
+
+    getUser: function(req, res) {
+
+        var userId = req.params.id;
+
+        User.findById(userId).exec((error, user) => {
+            if (error || !user) {
+                return res.status(404).send({
+                    message: 'Usuario no existe'
+                });
+            }
+
+            return res.status(404).send({
+                status: 'success',
+                user
+            });
+        });
     }
+
 
 
 };
