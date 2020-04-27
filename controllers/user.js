@@ -138,19 +138,13 @@ var controller = {
 
             });
         }
+    },
 
-
-
-
-
-
-
-        //Si coinciden, 
-        //Generar token y devolverlo
-
-
-        //tambien devolveremos los datos
-
+    update: function(req, res) {
+        // 0. Crear un middleware para verificar el jwt token, ponerselo a la ruta
+        return res.status(400).send({
+            message: "Metodo update"
+        });
     }
 
 
