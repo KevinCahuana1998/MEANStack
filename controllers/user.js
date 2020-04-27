@@ -2,6 +2,8 @@ var validator = require('validator');
 var User = require('../models/user');
 var bcrypt = require('bcrypt');
 var jwt = require('../services/jwt');
+var fs = require('fs');
+var path = require('path');
 
 var controller = {
     probando: function(req, res) {
@@ -217,6 +219,63 @@ var controller = {
         }
 
 
+
+
+    },
+
+    uploadAvatar: function(req, res) {
+        //Configurar el modulo multiparty (router/user)
+
+        var file = 'Archivo no enviado';
+        //Recoger el fichero de la peticion
+        if (!req.files) {
+            return res.status(404).send({
+                message: file
+            });
+        }
+
+        //Conseguir el nombre y extension del archivo
+        var file_path = req.files.file0.path;
+
+        var path_split = file_path.split('\\');
+        var file_name = path_split[2];
+
+        var ex_split = file_name.split('\.');
+        var file_ext = ex_split[1];
+
+        //Comprobar extension( solo images), si no es valida borrar fichero
+
+        if (file_ext != 'png' && file_ext != 'jpg' && file_ext != 'jpeg' && file_ext != 'gif') {
+
+            fs.unlink(file_path, (err) => {
+                return res.status(404).send({
+                    message: 'Extension de archivo no valida'
+                });
+            });
+
+
+        } else {
+            //Sacar el id del usuario identificado
+            var userId = req.user.sub;
+            //Buscar y actualizar documentos
+            User.findByIdAndUpdate({ _id: userId }, { image: file_name }, { new: true }, (error, userUpdate) => {
+                //Devolver respuesta
+                if (error || !userUpdate) {
+                    return res.status(200).send({
+                        message: 'Error al guardar al usuario'
+                    });
+                }
+
+                return res.status(200).send({
+                    status: 'success',
+                    message: 'Avatar guardado correctamente',
+                    userUpdate
+
+                });
+            });
+
+
+        }
 
 
     }
