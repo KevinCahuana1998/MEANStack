@@ -195,11 +195,28 @@ var controller = {
                     return res.status(400).send({
                         message: 'Correo ya existente, no puede modificarse'
                     });
+                } else {
+                    var userID = req.user.sub;
+                    //Buscar y actualizar documento
+                    User.findOneAndUpdate({ _id: userID }, params, { new: true }, (error, userUpdated) => {
+
+                        if (error || !userUpdated) {
+                            //Devolver respuesta
+                            return res.status(200).send({
+                                status: 'success',
+                                message: 'Error al actualizar datos'
+                            });
+                        }
+
+                        //Devolver respuesta
+                        return res.status(200).send({
+                            status: 'success',
+                            user: userUpdated
+                        });
+                    });
                 }
 
-                return res.status(400).send({
-                    message: 'El correo no puede cambiarse'
-                });
+
             });
 
         } else {

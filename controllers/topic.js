@@ -173,12 +173,36 @@ var controller = {
 
                 return res.status(200).send({
                     status: 'success',
-                    user: update
+                    topic: update
                 });
             });
 
         }
 
+    },
+
+    delete: function(req, res) {
+
+        var topicId = req.params.topicId;
+
+        Topic.findOneAndDelete({ _id: topicId, user: req.user.sub }, (err, topicDeleted) => {
+            if (err) {
+                return res.status(200).send({
+                    message: 'Error al eliminar'
+                });
+            }
+
+            if (!topicDeleted) {
+                return res.status(200).send({
+                    message: 'No se pudo borrar al usuario'
+                });
+            }
+
+            return res.status(200).send({
+                status: 'success',
+                topicDeleted
+            });
+        });
     }
 
 };
