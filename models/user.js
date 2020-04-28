@@ -10,5 +10,12 @@ var userSchema = Schema({
     role: String
 });
 
+//Para evitar que nos devuelva la contrase;a a la hora de hacer una peticion
+userSchema.methods.toJSON = function() {
+    var obj = this.toObject();
+    delete obj.password;
+    return obj;
+};
+
 module.exports = mongoose.model('User', userSchema);
 //lowerCase y pluriralizar

@@ -133,6 +133,7 @@ var controller = {
                                 });
                             } else {
                                 //Antes de eviar los datos del usuario, eliminamos su password (no de la BD)
+                                //aunque ya no es necesario por la configuracion en models/user
                                 userEncontrado.password = undefined;
                                 //enviar datos del usuario(userEncontrado)
                                 return res.status(200).send({
