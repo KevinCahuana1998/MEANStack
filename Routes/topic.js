@@ -6,5 +6,6 @@ var md_auth = require('../middlewares/authenticated');
 //Rutas topic
 router.post('/topic', md_auth.authenticated, TopicController.save);
 router.get('/topics/:page?', TopicController.getTopics);
+router.get('/user-topics/:userId', TopicController.getMyTopic);
 
 module.exports = router;

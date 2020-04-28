@@ -52,6 +52,10 @@ var controller = {
 
     },
 
+    //Por la url le enviamos la pagina, y este metodo nos devuelve un array de topics
+    // de esa pagina, aca los topics se paginan y se nos envia un array de 5 topics
+    //segun la pagina que enviemos
+
     getTopics: function(req, res) {
         //Cargar la libreria de paginacion en la clase( modelo)
 
@@ -82,14 +86,48 @@ var controller = {
                 });
             }
 
+            //devolver resultado ( topics, total topics, paginas)
             return res.status(200).send({
                 status: 'success',
                 topics: topics.docs,
                 totalTopics: topics.totalDocs,
-                totalPages: topics.totalPages,
-                page: page
+                totalPages: topics.totalPages
             });
         });
+
+
+    },
+
+    getMyTopic: function(req, res) {
+
+        userId = req.params.userId;
+
+        Topic.find({
+                user: userId
+            })
+            .sort([
+                ['date', 'descending']
+            ])
+            .exec((error, topics) => {
+
+                if (error) {
+                    return res.status(200).send({
+                        message: 'Error para traer topics'
+                    });
+                }
+
+                if (!topics) {
+                    return res.status(200).send({
+                        message: 'No hay topics en BD'
+                    });
+                }
+
+                return res.status(200).send({
+                    status: 'success',
+                    topics
+                });
+
+            });
 
 
     }
