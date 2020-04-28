@@ -281,8 +281,6 @@ var controller = {
 
                 });
             });
-
-
         }
 
 

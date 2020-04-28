@@ -126,6 +126,59 @@ var controller = {
             });
 
         });
+    },
+
+    update: function(req, res) {
+
+        var topicId = req.params.topicId;
+        var params = req.body;
+
+        try {
+            validate_title = !validator.isEmpty(params.title);
+            validate_content = !validator.isEmpty(params.content);
+            validate_lang = !validator.isEmpty(params.lang);
+        } catch (err) {
+            return res.status(400).send({
+                message: 'Faltan datos'
+            });
+        }
+
+        if (validate_title && validate_content && validate_lang) {
+
+            var updated = {
+                title: params.title,
+                content: params.content,
+                lang: params.lang,
+                code: params.code
+            };
+
+            userId = req.user.sub;
+
+            Topic.findOneAndUpdate({
+                _id: topicId,
+                user: userId
+            }, updated, { new: true }, (err, update) => {
+
+                if (err) {
+                    return res.status(400).send({
+                        message: 'Error al actualizar'
+                    });
+                }
+
+                if (!update) {
+                    return res.status(400).send({
+                        message: 'No se ha podido actualizar'
+                    });
+                }
+
+                return res.status(200).send({
+                    status: 'success',
+                    user: update
+                });
+            });
+
+        }
+
     }
 
 };
