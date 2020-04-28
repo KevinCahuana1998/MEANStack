@@ -29,6 +29,7 @@ var controller = {
             topic.content = params.content;
             topic.lang = params.lang;
             topic.code = params.code;
+            topic.user = req.user.sub;
 
             topic.save((error, topicStored) => {
                 if (error || !topicStored) {
@@ -43,13 +44,57 @@ var controller = {
                 });
             });
         } else {
-            return res.status(200).send({
+            return res.status(400).send({
                 message: 'Datos incorrectos'
             });
 
         }
 
+    },
+
+    getTopics: function(req, res) {
+        //Cargar la libreria de paginacion en la clase( modelo)
+
+        //Recoger la pagina actual
+        if (req.params.page == null || req.params.page == 0 || req.params.page == '0' || req.params.page == undefined || !req.params.page) {
+            page = 1;
+        } else {
+            page = parseInt(req.params.page);
+        }
+        //Indicar las opciones de paginacion
+        var options = {
+            sort: { date: -1 },
+            populate: 'user',
+            limit: 5,
+            page: page
+        };
+
+        Topic.paginate({}, options, (error, topics) => {
+            if (error) {
+                return res.status(400).send({
+                    message: 'Error al paginar topics'
+                });
+            }
+
+            if (!topics) {
+                return res.status(400).send({
+                    message: 'No se pudo paginar'
+                });
+            }
+
+            return res.status(200).send({
+                status: 'success',
+                topics: topics.docs,
+                totalTopics: topics.totalDocs,
+                totalPages: topics.totalPages,
+                page: page
+            });
+        });
+
+
     }
+
+
 
 };
 
