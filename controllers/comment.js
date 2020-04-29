@@ -150,11 +150,7 @@ var controller = {
                     message: 'Comentario no existe'
                 });
             }
-
-
-
         });
-
 
     }
 };

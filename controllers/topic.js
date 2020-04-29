@@ -91,12 +91,12 @@ var controller = {
             ])
             .exec((error, topics) => {
                 if (error) {
-                    return res.status(200).send({
+                    return res.status(400).send({
                         message: 'Error para traer topics'
                     });
                 }
                 if (!topics) {
-                    return res.status(200).send({
+                    return res.status(400).send({
                         message: 'No hay topics en BD'
                     });
                 }
@@ -187,13 +187,13 @@ var controller = {
 
         Topic.findOneAndDelete({ _id: topicId, user: req.user.sub }, (err, topicDeleted) => {
             if (err) {
-                return res.status(200).send({
+                return res.status(400).send({
                     message: 'Error al eliminar'
                 });
             }
 
             if (!topicDeleted) {
-                return res.status(200).send({
+                return res.status(400).send({
                     message: 'No se pudo borrar al usuario'
                 });
             }
@@ -203,6 +203,44 @@ var controller = {
                 topicDeleted
             });
         });
+    },
+
+    search: function(req, res) {
+
+        var searchString = req.params.search;
+
+        Topic.find({
+                "$or": [
+                    { "title": { "$regex": searchString, "$options": "i" } },
+                    { "content": { "$regex": searchString, "$options": "i" } },
+                    { "code": { "$regex": searchString, "$options": "i" } },
+                    { "lang": { "$regex": searchString, "$options": "i" } }
+                ]
+            })
+            .sort([
+                ['date', 'descending']
+            ])
+            .exec((error, topics) => {
+
+                if (error) {
+                    return res.status(400).send({
+                        message: 'Error al buscar'
+                    });
+                }
+
+                if (!topics) {
+                    return res.status(400).send({
+                        message: 'No se encontraron resultados'
+                    });
+                }
+
+                return res.status(200).send({
+                    status: 'success1',
+                    topics
+                });
+            });
+
+
     }
 
 };
