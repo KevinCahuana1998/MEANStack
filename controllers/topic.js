@@ -108,24 +108,28 @@ var controller = {
     },
     getTopic: function(req, res) {
         var topicId = req.params.topicId;
-        Topic.find({ _id: topicId }).populate('user').exec((err, topic) => {
-            if (err) {
-                return res.status(400).send({
-                    message: 'Error al traer topic'
-                });
-            }
-            if (!topic) {
-                return res.status(400).send({
-                    message: 'Topic no existe'
-                });
-            }
+        //Debi poner findById ya que find devuelve un array, pero en el front lo recogi con [0] y no pasa nada
+        Topic.find({ _id: topicId })
+            .populate('user')
+            .populate('comments.user')
+            .exec((err, topic) => {
+                if (err) {
+                    return res.status(400).send({
+                        message: 'Error al traer topic'
+                    });
+                }
+                if (!topic) {
+                    return res.status(400).send({
+                        message: 'Topic no existe'
+                    });
+                }
 
-            return res.status(200).send({
-                status: 'success',
-                topic
+                return res.status(200).send({
+                    status: 'success',
+                    topic
+                });
+
             });
-
-        });
     },
 
     update: function(req, res) {
@@ -217,6 +221,7 @@ var controller = {
                     { "lang": { "$regex": searchString, "$options": "i" } }
                 ]
             })
+            .populate('user')
             .sort([
                 ['date', 'descending']
             ])

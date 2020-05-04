@@ -34,10 +34,30 @@ var controller = {
                             message: 'Error al guardar comentario'
                         });
                     }
-                    return res.status(200).send({
-                        message: 'success',
-                        topic
-                    });
+
+                    Topic.findById(topic._id)
+                        .populate('user')
+                        .populate('comments.user')
+                        .exec((err, topic) => {
+                            if (err) {
+                                return res.status(400).send({
+                                    message: 'Error al traer topic'
+                                });
+                            }
+                            if (!topic) {
+                                return res.status(400).send({
+                                    message: 'Topic no existe'
+                                });
+                            }
+
+                            return res.status(200).send({
+                                status: 'success',
+                                topic
+                            });
+
+                        });
+
+
                 });
 
             } else {
@@ -139,10 +159,27 @@ var controller = {
                         });
                     }
 
-                    return res.status(200).send({
-                        status: 'success',
-                        topic
-                    });
+                    Topic.findById(topic._id)
+                        .populate('user')
+                        .populate('comments.user')
+                        .exec((err, topic) => {
+                            if (err) {
+                                return res.status(400).send({
+                                    message: 'Error al traer topic'
+                                });
+                            }
+                            if (!topic) {
+                                return res.status(400).send({
+                                    message: 'Topic no existe'
+                                });
+                            }
+
+                            return res.status(200).send({
+                                status: 'success',
+                                topic
+                            });
+
+                        });
                 });
 
             } else {

@@ -40,7 +40,7 @@ var controller = {
             user.name = params.name;
             user.surname = params.surname;
             user.email = params.email.toLowerCase();
-            user.image = null;
+            user.image = 'gg1auxMpO1N42xDemYgsUfu8.jpg';
             user.role = 'ROLE_USER';
 
             //Comprobar si el usuario existe
@@ -329,7 +329,7 @@ var controller = {
                 });
             }
 
-            return res.status(404).send({
+            return res.status(200).send({
                 status: 'success',
                 users
             });
@@ -347,7 +347,7 @@ var controller = {
                 });
             }
 
-            return res.status(404).send({
+            return res.status(200).send({
                 status: 'success',
                 user
             });
