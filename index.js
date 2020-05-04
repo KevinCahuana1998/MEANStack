@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var app = require('./app');
 
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config()
+    require('dotenv').config();
 }
 
 const DB_URI = process.env.DB_URI;
