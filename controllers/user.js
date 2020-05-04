@@ -8,13 +8,13 @@ var path = require('path');
 var controller = {
     probando: function(req, res) {
         return res.status(200).send({
-            message: "Metodo probando"
+            message: "Metodo probandos"
         });
     },
 
     testeando: function(req, res) {
         return res.status(200).send({
-            message: "Metodo testeando"
+            message: "Metodo testeandos"
         });
     },
 
