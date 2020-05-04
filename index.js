@@ -6,7 +6,7 @@ var port = process.env.port | 3999;
 mongoose.set('useFindAndModify', false);
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/api-rest-node', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://cahuana:shinigami123x00@cluster0-rjljq.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
 
         console.log("La coneccion a Mongo DB es correcta");
